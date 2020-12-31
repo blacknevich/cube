@@ -40,11 +40,6 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="cube_repo" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="map.cub" REDIRECT_INPUT="false" ELEVATE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cube_repo" TARGET_NAME="cube_repo" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cube_repo" RUN_TARGET_NAME="cube_repo">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -67,6 +62,8 @@
       <workItem from="1608727901549" duration="82000" />
       <workItem from="1608728016988" duration="1711000" />
       <workItem from="1608900414502" duration="3242000" />
+      <workItem from="1608907641347" duration="1314000" />
+      <workItem from="1608912726823" duration="301000" />
     </task>
     <servers />
   </component>
