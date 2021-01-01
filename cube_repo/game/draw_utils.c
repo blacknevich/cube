@@ -6,12 +6,11 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/30 18:21:01 by nscarab           #+#    #+#             */
-/*   Updated: 2020/12/31 17:34:36 by nscarab          ###   ########.fr       */
+/*   Updated: 2020/12/31 19:41:54 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube.h"
-#include <stdio.h>
 
 void	my_mlx_pixel_put(t_mlx *mlx, int x, int y, int color)
 {
@@ -31,7 +30,6 @@ void	draw_ceilling(t_all *all)
 
 	edge_x = (size_t)(all->parse.res_x);
 	edge_y = ((size_t)(all->parse.res_y)) / 2;
-	printf("ex %lu, ey %lu\n", edge_x, edge_y);
 	y = 0;
 	color = all->parse.ceilling_color;
 	while (y < edge_y)
@@ -39,7 +37,6 @@ void	draw_ceilling(t_all *all)
 		x = 0;
 		while (x < edge_x)
 		{
-			//printf("%lu\n", x);
 			my_mlx_pixel_put(&all->mlx, x, y, color);
 			x++;
 		}
