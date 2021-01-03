@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 10:50:57 by nscarab           #+#    #+#             */
-/*   Updated: 2020/12/31 15:25:24 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/03 18:36:27 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,29 @@
 
 void	exit_with_error(char *str, t_parse parse)
 {
-	free_parse(parse);
 	write(2, "Error\n", 6);
 	write(2, str, ft_strlen(str));
+	write(2, "\n", 1);
+	free_parse(parse);
+	exit(1);
+}
+
+void	is_extension_cub(char *str)
+{
+	size_t	count;
+	size_t	len;
+
+	len = ft_strlen(str);
+	count = len;
+	while (count > 0)
+	{
+		if (str[count] == '.' && str[count - 1] != '\\')
+			if (ft_strnstr((str + count), ".cub", ft_strlen(str + count)))
+				return ;
+		count--;
+	}
+	write(2, "Error\n", 6);
+	write(2, "Invalid map extension", 21);
 	write(2, "\n", 1);
 	exit(1);
 }

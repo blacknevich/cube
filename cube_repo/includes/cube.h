@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/16 18:30:34 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/01 23:54:25 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/03 20:36:07 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 # define W_KEY 13
 # define LEFT_KEY 123
 # define RIGHT_KEY 124
+# define MOVESPEED 0.2
+# define ROTSPEED 0.07
 ////////////////////////////////////////don't forget to remove//////////////
 #include <stdio.h>
 
@@ -89,13 +91,50 @@ typedef struct		s_render
 	int				side;
 	int				draw_start;
 	int				draw_end;
+	double			wall_x;
+	int				tex_x;
+	double			draw_step;
+	double			tex_pos;
 }					t_render;
+
+typedef struct		texture
+{
+	void			*img;
+	void			*addr;
+	int				width;
+	int				height;
+	int				bits_per_pixel;
+	int				line_lenght;
+	int				endian;
+}					t_texture;
+
+typedef struct		s_textures
+{
+	t_texture		no;
+	t_texture		so;
+	t_texture		we;
+	t_texture		ea;
+	t_texture		sprite;
+}					t_textures;
+
+
+typedef struct		s_key_status
+{
+	char		w;
+	char		s;
+	char		a;
+	char		d;
+	char		l;
+	char		r;
+}					t_key_status;
 
 typedef struct		s_all
 {
 	t_parse			parse;
 	t_mlx			mlx;
 	t_render		render;
+	t_textures		textures;
+	t_key_status	keys;
 }					t_all;
 
 void	parse(char **file);
