@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/30 18:01:24 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/03 20:47:43 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/04 17:17:33 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ void	draw_texture(t_all *all, int x)
 		*/
 	while (y < all->render.draw_end)
 	{
-		tex_y = (int)all->render.tex_pos;
+		tex_y = (int)all->render.tex_pos & (drawn->height - 1);
 		all->render.tex_pos += all->render.draw_step;
 		color = ((int*)drawn->addr)[drawn->height * tex_y + all->render.tex_x];
 		my_mlx_pixel_put(&all->mlx, x, y, color);
@@ -232,21 +232,84 @@ void	draw_texture(t_all *all, int x)
 	}
 }
 
+int	no_wall_in_direction(t_all *all, double dir, int axis)
+{
+	char	**map;
+	t_render	*render;
+
+	map = all->parse.file;
+	render = &all->render;
+	if (axis == 'x')
+	{
+		if (map[(int)render->pl_pos.y][(int)(render->pl_pos.x + dir
+				* MOVESPEED)] == '0' || is_player(map[(int)render->pl_pos.y][(int)(render->pl_pos.x + dir * MOVESPEED)]))
+		return (1);
+ }
+	if (axis == 'y')
+		if (map[(int)(render->pl_pos.y + dir * MOVESPEED)]
+				[(int)render->pl_pos.x] == '0' ||
+				is_player(map[(int)(render->pl_pos.y +
+						dir * MOVESPEED)]
+				[(int)render->pl_pos.x]))
+		return (1);
+	return (0);
+}
+
 void	move_player(t_all *all)
 {
-	t_render	render;
+	t_render	*render;
 	char		**map;
+	double old_dir_x;
 
 	render = &all->render;
-	map = &all->parse.file;
+	map = all->parse.file;
 	if (all->keys.w == 0 && all->keys.a == 0 && all->keys.s == 0 &&
 			all->keys.d == 0 && all->keys.r == 0 &&all->keys.l == 0)
 		return ;
 	if (all->keys.w == 1)
 	{
-		if (is_wall
+		if (no_wall_in_direction(all, render->pl_dir.x, 'x'))
+			render->pl_pos.x += render->pl_dir.x * MOVESPEED;
+		if (no_wall_in_direction(all, render->pl_dir.y, 'y'))
+			render->pl_pos.y += render->pl_dir.y * MOVESPEED;
 	}
-
+	if (all->keys.s == 1)
+	{
+		if (no_wall_in_direction(all, -render->pl_dir.x, 'x'))
+			render->pl_pos.x -= render->pl_dir.x * MOVESPEED;
+		if (no_wall_in_direction(all, -render->pl_dir.y, 'y'))
+			render->pl_pos.y -= render->pl_dir.y * MOVESPEED;
+	}
+	if (all->keys.a == 1)
+	{
+		if (no_wall_in_direction(all, render->plane.x, 'x'))
+			render->pl_pos.x += render->plane.x * MOVESPEED;
+		if (no_wall_in_direction(all, render->plane.y, 'y'))
+			render->pl_pos.y += render->plane.y * MOVESPEED;
+	}
+	if (all->keys.d == 1)
+	{
+		if (no_wall_in_direction(all, -render->plane.x, 'x'))
+			render->pl_pos.x -= render->plane.x * MOVESPEED;
+		if (no_wall_in_direction(all, -render->plane.y, 'y'))
+			render->pl_pos.y -= render->plane.y * MOVESPEED;
+	}
+	if (all->keys.l == 1)
+	{
+		old_dir_x = render->pl_dir.x;
+		render->pl_dir.x = render->pl_dir.x * cos(-ROTSPEED) - render->pl_dir.y * sin(-ROTSPEED);
+		render->pl_dir.y = old_dir_x * sin(-ROTSPEED) + render->pl_dir.y * cos(-ROTSPEED);
+	all->render.plane.x = (cos(-1.5708) * all->render.pl_dir.x - sin(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
+	all->render.plane.y = (sin(-1.5708) * all->render.pl_dir.x + cos(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
+	}
+	if (all->keys.r == 1)
+	{
+		old_dir_x = render->pl_dir.x;
+		render->pl_dir.x = render->pl_dir.x * cos(ROTSPEED) - render->pl_dir.y * sin(ROTSPEED);
+		render->pl_dir.y = old_dir_x * sin(ROTSPEED) + render->pl_dir.y * cos(ROTSPEED);
+	all->render.plane.x = (cos(-1.5708) * all->render.pl_dir.x - sin(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
+	all->render.plane.y = (sin(-1.5708) * all->render.pl_dir.x + cos(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
+	}
 }
 
 int		raycasting(t_all *all)
@@ -255,7 +318,6 @@ int		raycasting(t_all *all)
 	t_render	*render;
 
 	render = &all->render;
-	init_player(all);
 	//printf("posx %.2f posy %.2f dirx %.2f diry %.2f planex %.2f planey %.2f", render->pl_pos.x, render->pl_pos.y, render->pl_dir.x, render->pl_dir.y, render->plane.x, render->plane.y);
 	move_player(all);
 	draw_floor(all);
@@ -354,10 +416,10 @@ void	init_textures(t_all *all)
 	init_sprite_texture(all->parse.sprite_texture_path, all);
 }
 
-int 	press_key(int keycode, t_all *ll)
+int 	press_key(int keycode, t_all *all)
 {
 	if (keycode == ESC_KEY)
-		end_game(all);
+		game_end(all);
 	if (keycode == A_KEY)
 		all->keys.a = 1;
 	if (keycode == W_KEY)
@@ -370,9 +432,10 @@ int 	press_key(int keycode, t_all *ll)
 		all->keys.r = 1;
 	if (keycode == LEFT_KEY)
 		all->keys.l = 1;
+	return (0);
 }
 
-int 	release_key(int keycode, t_all *ll)
+int 	release_key(int keycode, t_all *all)
 {
 	if (keycode == A_KEY)
 		all->keys.a = 0;
@@ -386,6 +449,7 @@ int 	release_key(int keycode, t_all *ll)
 		all->keys.r = 0;
 	if (keycode == LEFT_KEY)
 		all->keys.l = 0;
+	return (0);
 }
 
 void	init_keys(t_key_status *keys)
@@ -403,12 +467,13 @@ void	game_start(t_parse *parse)
 	t_all		all;
 
 	all.parse = *parse;
+	init_keys(&all.keys);
 	all.mlx.mlx = mlx_init();
 	all.mlx.win = mlx_new_window(all.mlx.mlx, parse->res_x, parse->res_y, "nscarab_cube3D");
 	all.mlx.img = mlx_new_image(all.mlx.mlx, parse->res_x , parse->res_y);
 	all.mlx.addr = mlx_get_data_addr(all.mlx.img, &all.mlx.bits_per_pixel, &all.mlx.line_lenght, &all.mlx.endian);
 	init_textures(&all);
-	init_keys(&all->keys);
+	init_player(&all);
 	mlx_do_key_autorepeatoff(all.mlx.mlx);
 	mlx_hook(all.mlx.win, 17, 0, game_end, &all);
 	mlx_hook(all.mlx.win, 2, 0, press_key, &all);

@@ -27,7 +27,8 @@ MLX_PATH	= minilibx_opengl_20191021/
 MLX_LIB		= libmlx.a
 #####################################flags#######################################
 MLX_FLAGS	= -framework OpenGL -framework AppKit
-CFLAGS		= -Wall -Wextra -Werror -fsanitize=address
+CFLAGS		= -Wall -Wextra -Werror
+SANITIZE	= -fsanitize=address
 INC			= includes/
 
 .c.o:

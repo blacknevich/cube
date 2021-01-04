@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/16 18:30:34 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/03 20:36:07 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/04 16:01:37 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define W_KEY 13
 # define LEFT_KEY 123
 # define RIGHT_KEY 124
-# define MOVESPEED 0.2
+# define MOVESPEED 0.1
 # define ROTSPEED 0.07
 ////////////////////////////////////////don't forget to remove//////////////
 #include <stdio.h>
