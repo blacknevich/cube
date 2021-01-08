@@ -1,0 +1,14 @@
+NO ./pics/cross
+WE ./pics/metal
+EA ./pics/hitler
+F 255,0,0
+R 1920 1080
+
+
+SO ./pics/verboten
+S ./pics/hitler
+C 0,0,255
+
+ 1
+1W1
+ 1

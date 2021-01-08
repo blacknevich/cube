@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 10:50:57 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/04 16:40:36 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/07 16:54:49 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	exit_with_error(char *str, t_parse parse)
 	exit(1);
 }
 
-void	is_extension(char *str, char *ext)
+int	is_extension(char *str, char *ext)
 {
 	size_t	strlen;
 	size_t	extlen;
@@ -34,11 +34,10 @@ void	is_extension(char *str, char *ext)
 	if (extlen == 0)
 		return (1);
 	if (str[strlen - extlen - 1] != '/')
-		if (ft_strncmp(str[strlen - extlen], ext, extlen))
+		if (ft_strncmp(&str[strlen - extlen], ext, extlen))
 			return (1);
 	return (0);
 	}
-}
 
 int				ft_atoi_resolution(char **str, t_parse parse)
 {
@@ -82,15 +81,32 @@ void	free_file(char **file)
 	size_t count;
 
 	count = 0;
-	while(file[count])
-	{
-		free(file[count]);
-		file[count++] = NULL;
-	}
 	if (file)
 	{
+		while(file[count])
+		{
+			free(file[count]);
+			file[count++] = NULL;
+		}
 		free(file);
 		file = NULL;
+	}
+}
+
+void	free_sprites(t_sprite **sprites)
+{
+	size_t count;
+
+	count = 0;
+	if (sprites)
+	{
+		while(sprites[count])
+		{
+			free(sprites[count]);
+			sprites[count++] = NULL;
+		}
+		free(sprites);
+		sprites = NULL;
 	}
 }
 
@@ -106,8 +122,8 @@ void	free_parse(t_parse parse)
 		free(parse.ea_texture_path);
 	if (parse.sprite_texture_path)
 		free(parse.sprite_texture_path);
-	if (parse.file)
-		free_file(parse.file);
+	free_file(parse.file);
+	free_sprites(parse.sprites);
 }
 
 char	*ft_strdup_cube(char **s1, t_parse parse)

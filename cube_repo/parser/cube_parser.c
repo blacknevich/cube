@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 10:51:18 by nscarab           #+#    #+#             */
-/*   Updated: 2020/12/31 19:34:11 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/06 21:09:43 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,5 +202,6 @@ void	parse(char **file)
 		ft_putendl_fd((parse.file)[count++], 1);
 	////////////////////////////////////////////////////////////
 	is_map_valid(parse.file, &parse);
+	init_sprites(&parse);
 	game_start(&parse);
 }

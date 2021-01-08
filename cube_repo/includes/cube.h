@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/16 18:30:34 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/04 16:01:37 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/08 17:58:17 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # define RIGHT_KEY 124
 # define MOVESPEED 0.1
 # define ROTSPEED 0.07
+# define ZOOM 0.6
 ////////////////////////////////////////don't forget to remove//////////////
 #include <stdio.h>
 
@@ -44,6 +45,21 @@ typedef struct		s_mlx
 	int				endian;
 }					t_mlx;
 
+typedef struct		s_double_ray
+{
+	double			x;
+	double			y;
+}					t_double_ray;
+
+typedef struct		s_sprite
+{
+	double			x;
+	double			y;
+	double			rel_x;
+	double			rel_y;
+	double			dist;
+}					t_sprite;
+
 typedef struct		s_parse
 {
 	int				current_texture;
@@ -58,14 +74,10 @@ typedef struct		s_parse
 	char			*sprite_texture_path;
 	char			**file;
 	char			player_direction;
-	uint32_t		sprite_count;
+	int				sprite_count;
+	t_sprite		**sprites;
+	char			**sprites_dist;
 }					t_parse;
-
-typedef struct		s_double_ray
-{
-	double			x;
-	double			y;
-}					t_double_ray;
 
 typedef struct		s_int_dot
 {
@@ -93,8 +105,16 @@ typedef struct		s_render
 	int				draw_end;
 	double			wall_x;
 	int				tex_x;
+	int				tex_y;
+	int				color;
 	double			draw_step;
 	double			tex_pos;
+	t_double_ray	trans;
+	t_int_dot		draw_s;
+	t_int_dot		draw_e;
+	int				sprite_height;
+	int				sprite_width;
+	int				sprite_screen;
 }					t_render;
 
 typedef struct		texture
@@ -162,5 +182,6 @@ int		is_player(int c);
 
 void	draw_floor(t_all *all);
 void	draw_ceilling(t_all *all);
+void	init_sprites(t_parse *parse);
 
 #endif

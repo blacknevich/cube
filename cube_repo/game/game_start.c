@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/30 18:01:24 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/04 17:17:33 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/08 17:42:15 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 int	game_end(t_all *all)
 {
 	mlx_destroy_window(all->mlx.mlx, all->mlx.win);
-	free_parse(all->parse);
-	//sleep(60);
 	exit(0);
 	return (0);
 }
@@ -63,7 +61,7 @@ void	init_player(t_all *all)
 	int		y;
 
 	map = all->parse.file;
-	all->render.zoom = 0.66;
+	all->render.zoom = ZOOM;
 	y = 0;
 	while ((all->parse.file)[y])
 	{
@@ -117,6 +115,8 @@ void	find_wall(t_all *all)
 	t_render	*render;
 
 	render = &all->render;
+	if (all->parse.file[render->map.y][render->map.x] == '1')
+		render->hit = 1;
 	while (render->hit == 0)
 	{
 		if (render->side_dist.x < render->side_dist.y)
@@ -147,6 +147,8 @@ void	project_on_plane(t_all *all)
 	{
 		render->wall_to_plane = (render->map.y - render->pl_pos.y + (1 - render->step.y) / 2) / render->fan.y;
 	}
+	if (render->wall_to_plane == 0)
+		render-> wall_to_plane += 0.05;
 }
 
 void	calc_line(t_all *all)
@@ -217,11 +219,6 @@ void	draw_texture(t_all *all, int x)
 			//drawn->img, drawn->addr, drawn->width, drawn->height, drawn->bits_per_pixel, drawn->line_lenght, drawn->endian);
 	render_texture(all, drawn);
 	y = all->render.draw_start;
-	/*if (all->render.tex_pos > (double)(drawn->height - 1))
-		tex_y = drawn->height - 1;
-	else
-		tex_y = (int)all->render.tex_pos;
-		*/
 	while (y < all->render.draw_end)
 	{
 		tex_y = (int)all->render.tex_pos & (drawn->height - 1);
@@ -242,14 +239,14 @@ int	no_wall_in_direction(t_all *all, double dir, int axis)
 	if (axis == 'x')
 	{
 		if (map[(int)render->pl_pos.y][(int)(render->pl_pos.x + dir
-				* MOVESPEED)] == '0' || is_player(map[(int)render->pl_pos.y][(int)(render->pl_pos.x + dir * MOVESPEED)]))
+				* MOVESPEED - 0.1 * (dir < 0) + 0.1 * (dir > 0))] == '0' || is_player(map[(int)render->pl_pos.y][(int)(render->pl_pos.x + dir * MOVESPEED - 0.1 * (dir < 0) + 0.1 * (dir > 0))]))
 		return (1);
  }
 	if (axis == 'y')
-		if (map[(int)(render->pl_pos.y + dir * MOVESPEED)]
+		if (map[(int)(render->pl_pos.y + dir * MOVESPEED - 0.1 * (dir < 0) + 0.1 * (dir > 0))]
 				[(int)render->pl_pos.x] == '0' ||
 				is_player(map[(int)(render->pl_pos.y +
-						dir * MOVESPEED)]
+						dir * MOVESPEED - 0.1 * (dir < 0) + 0.1 * (dir > 0))]
 				[(int)render->pl_pos.x]))
 		return (1);
 	return (0);
@@ -266,35 +263,35 @@ void	move_player(t_all *all)
 	if (all->keys.w == 0 && all->keys.a == 0 && all->keys.s == 0 &&
 			all->keys.d == 0 && all->keys.r == 0 &&all->keys.l == 0)
 		return ;
-	if (all->keys.w == 1)
+	if (all->keys.w == 1 && all->keys.s != 1)
 	{
 		if (no_wall_in_direction(all, render->pl_dir.x, 'x'))
 			render->pl_pos.x += render->pl_dir.x * MOVESPEED;
 		if (no_wall_in_direction(all, render->pl_dir.y, 'y'))
 			render->pl_pos.y += render->pl_dir.y * MOVESPEED;
 	}
-	if (all->keys.s == 1)
+	if (all->keys.s == 1 && all->keys.w != 1)
 	{
 		if (no_wall_in_direction(all, -render->pl_dir.x, 'x'))
 			render->pl_pos.x -= render->pl_dir.x * MOVESPEED;
 		if (no_wall_in_direction(all, -render->pl_dir.y, 'y'))
 			render->pl_pos.y -= render->pl_dir.y * MOVESPEED;
 	}
-	if (all->keys.a == 1)
+	if (all->keys.a == 1 && all->keys.d != 1)
 	{
 		if (no_wall_in_direction(all, render->plane.x, 'x'))
 			render->pl_pos.x += render->plane.x * MOVESPEED;
 		if (no_wall_in_direction(all, render->plane.y, 'y'))
 			render->pl_pos.y += render->plane.y * MOVESPEED;
 	}
-	if (all->keys.d == 1)
+	if (all->keys.d == 1 && all->keys.a != 1)
 	{
 		if (no_wall_in_direction(all, -render->plane.x, 'x'))
 			render->pl_pos.x -= render->plane.x * MOVESPEED;
 		if (no_wall_in_direction(all, -render->plane.y, 'y'))
 			render->pl_pos.y -= render->plane.y * MOVESPEED;
 	}
-	if (all->keys.l == 1)
+	if (all->keys.l == 1 && all->keys.r != 1)
 	{
 		old_dir_x = render->pl_dir.x;
 		render->pl_dir.x = render->pl_dir.x * cos(-ROTSPEED) - render->pl_dir.y * sin(-ROTSPEED);
@@ -302,7 +299,7 @@ void	move_player(t_all *all)
 	all->render.plane.x = (cos(-1.5708) * all->render.pl_dir.x - sin(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
 	all->render.plane.y = (sin(-1.5708) * all->render.pl_dir.x + cos(-1.5708) * all->render.pl_dir.y) * all->render.zoom;
 	}
-	if (all->keys.r == 1)
+	if (all->keys.r == 1 && all->keys.l != 1)
 	{
 		old_dir_x = render->pl_dir.x;
 		render->pl_dir.x = render->pl_dir.x * cos(ROTSPEED) - render->pl_dir.y * sin(ROTSPEED);
@@ -312,10 +309,156 @@ void	move_player(t_all *all)
 	}
 }
 
+void	calc_sprite_distance(t_all *all)
+{
+	t_sprite		**sprites;
+	int				count;
+
+	sprites = all->parse.sprites;
+	count = 0;
+	while (sprites[count])
+	{
+		sprites[count]->rel_x = -all->render.pl_pos.x +
+			sprites[count]->x;
+		sprites[count]->rel_y = -all->render.pl_pos.y +
+			sprites[count]->y;
+	/*	printf("posx %.2f, posy %.2f\nspritex %.2f, spritey %.2f\nrelx %.2f, rely %.2f", all->render.pl_pos.x, 
+				all->render.pl_pos.y, sprites[count]->x, sprites[count]->y, sprites[count]->rel_x,
+				sprites[count]->rel_y);*/
+		sprites[count]->dist = sprites[count]->rel_x *
+			sprites[count]->rel_x +
+			sprites[count]->rel_y * sprites[count]->rel_y;
+		count++;
+	}
+}
+
+void	sort_sprites(t_sprite **sprites, int num)
+{
+	int	i;
+	int	j;
+	t_sprite	*save;
+	
+	if (num == 0)
+		return ;
+	i = 0;
+	while(i < num - 1)
+	{
+		j = i + 1;
+		while (j < num)
+		{
+			if (sprites[i]->dist < sprites[j]->dist)
+			{
+				save = sprites[i];
+				sprites[i] = sprites[j];
+				sprites[j] = save;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+void	calc_draw_sprite(t_all *all)
+{
+	t_render	*render;
+
+	render = &all->render;
+	render->sprite_height = abs((int)(all->parse.res_y / render->trans.y));
+	render->sprite_width = abs((int)(all->parse.res_y / render->trans.y));
+	render->draw_s.y = (all->parse.res_y - render->sprite_height) / 2;
+	if (render->draw_s.y < 0)
+		render->draw_s.y = 0;
+	render->draw_e.y = (all->parse.res_y + render->sprite_height) / 2;
+	if (render->draw_e.y >= all->parse.res_y)
+		render->draw_e.y = all->parse.res_y - 1;
+	render->draw_s.x = all->render.sprite_screen - render->sprite_width / 2;
+	if (render->draw_s.x < 0)
+		render->draw_s.x = 0;
+	render->draw_e.x = all->render.sprite_screen + render->sprite_width / 2;
+	if (render->draw_e.x >= all->parse.res_x)
+		render->draw_e.x = all->parse.res_x - 1;
+}
+
+void	draw_sprite(t_all *all, double *dist_buff)
+{
+	t_render	*render;
+	int			x;
+	int			y;
+
+	render = &all->render;
+	x = all->render.draw_s.x;
+	while (x < render->draw_e.x)
+	{
+		render->tex_x = (int)((x - (render->sprite_screen - render->sprite_width / 2)) *
+			all->textures.sprite.width / render->sprite_width);
+		if (render->trans.y > 0 && render->trans.y < dist_buff[x] && x > 0 && x < all->parse.res_x)
+		{
+			y = all->render.draw_s.y;
+			while (y < render->draw_e.y)
+			{
+				render->tex_y = (int)((y - (all->parse.res_y - render->sprite_height) / 2) *
+			all->textures.sprite.height / render->sprite_height);
+				render->color = ((int*)all->textures.sprite.addr)
+					[all->textures.sprite.width * render->tex_y + render->tex_x];
+				if ((render->color & 0x00FFFFFF) != 9961608)
+					my_mlx_pixel_put(&all->mlx, x, y, render->color);
+				y++;
+			}
+		}
+		x++;
+	}
+
+}
+void	render_sprites(t_all *all, double *dist_buff)
+{
+	int	count;
+	t_sprite	**sprites;
+	t_render	*render;
+	double		inv_det;
+
+	sprites = all->parse.sprites;
+	count = 0;
+	render = &all->render;
+	calc_sprite_distance(all);
+	sort_sprites(all->parse.sprites, all->parse.sprite_count);
+	/*while(sprites[count])
+	{
+		printf ("x %.2f, y %.2f\n, dist %.2f", sprites[count]->x,
+				sprites[count]->y, sprites[count]->dist);
+			count++;
+	}*/
+	while (sprites[count])
+	{
+			/*render->-x = sprites[count]->rel_x * render->pl_dir.x
+				+ sprites[count]->rel_y * render->plane.x;
+		render->trans.y = sprites[count]->rel_x * render->pl_dir.y
+			+ sprites[count]->rel_y * render->plane.y;*/
+		inv_det = 1.0 / (-render->plane.x * render->pl_dir.y
+				+ render->pl_dir.x * render->plane.y);
+		render->trans.x = inv_det * (render->pl_dir.y * 
+				sprites[count]->rel_x - render->pl_dir.x *
+				sprites[count]->rel_y);
+		render->trans.y = inv_det * (render->plane.y * 
+				sprites[count]->rel_x - render->plane.x *
+				sprites[count]->rel_y);
+		//printf("rel_x %.2f, rel_y %.2f\n dirx %.2f, diry %.2f\n planex %.2f, planey %.2f\n transx %.2f, transy %.2f\n",
+				//sprites[count]->rel_x, sprites[count]->rel_y, render->pl_dir.x, render->pl_dir.y,
+			//render->plane.x, render->plane.y, render->trans.x, render->trans.y);
+		render->sprite_screen = (int)(all->parse.res_x / 2) *
+				(1 + render->trans.x / render->trans.y);
+		//if (render->sprite_screen >= all->parse.res_x)
+			//render->sprite_screen = all->parse.res_x - 1;
+		calc_draw_sprite(all);
+		draw_sprite(all, dist_buff);
+		count++;
+	}
+}
+
 int		raycasting(t_all *all)
 {
-	int		x;
+	int			x;
 	t_render	*render;
+	double		dist_buff[all->parse.res_x];
 
 	render = &all->render;
 	//printf("posx %.2f posy %.2f dirx %.2f diry %.2f planex %.2f planey %.2f", render->pl_pos.x, render->pl_pos.y, render->pl_dir.x, render->pl_dir.y, render->plane.x, render->plane.y);
@@ -330,18 +473,21 @@ int		raycasting(t_all *all)
 		render->fan.y = render->pl_dir.y + render->plane.y * render->camera_x;
 		render->map.x = (int)render->pl_pos.x;
 		render->map.y = (int)render->pl_pos.y;
+		//printf("mapx %d,  mapy %d, posx %.2f, posy %.2f", render->map.x, render->map.y, render->pl_pos.x, render->pl_pos.y);
 		render->delta_dist.x = fabs(1 / render->fan.x);
 		render->delta_dist.y = fabs(1 / render->fan.y);
 		init_side_dist(all);
 		render->hit = 0;
 		find_wall(all);
 		project_on_plane(all);
-//		printf("fanx %.2f, fany %.2f\n, mapx %d, mapy %d, deltax %.2f, deltay %f, sidex %.2f, sidey %.2f\n stepx %d,  stepy %d, wallperp %.2f", render->fan.x, render->fan.y, render->map.x,  render->map.y, render->delta_dist.x,  render->delta_dist.y, render->side_dist.x, render->side_dist.y, render->step.x, render->step.y, render->wall_to_plane);
+		//printf("fanx %.2f, fany %.2f\n, mapx %d, mapy %d, deltax %.2f, deltay %f, sidex %.2f, sidey %.2f\n stepx %d,  stepy %d, wallperp %.2f, posx %.2f, posy %.2f", render->fan.x, render->fan.y, render->map.x,  render->map.y, render->delta_dist.x,  render->delta_dist.y, render->side_dist.x, render->side_dist.y, render->step.x, render->step.y, render->wall_to_plane, render->pl_pos.x, render->pl_pos.y);
 		calc_line(all);
 		//printf("line_height %d, draw start %d, draw end %d\n, resolution %d", render->line_height, render->draw_start, render->draw_end, all->parse.res_y);
 		draw_texture(all, x);
+		dist_buff[x] = render->wall_to_plane;
 		x++;
 	}
+	render_sprites(all, dist_buff);
 	mlx_put_image_to_window(all->mlx.mlx, all->mlx.win, all->mlx.img, 0, 0);
 	return (0);
 }
@@ -462,6 +608,39 @@ void	init_keys(t_key_status *keys)
 	keys->l = 0;
 }
 
+void	init_sprites(t_parse *parse)
+{
+	uint32_t	y;
+	uint32_t	x;
+	uint32_t	count;
+
+	y = 0;
+	count = 0;
+	parse->sprites = (t_sprite**)malloc(sizeof(t_sprite*) *
+			(parse->sprite_count + 1));
+	if (!parse->sprites)
+		exit_with_error("Malloc error", *parse);
+	while (parse->file[y])
+	{
+		x = 0;
+		while (parse->file[y][x])
+		{
+			if (parse->file[y][x] == '2')
+			{
+				if (!(parse->sprites[count] = (t_sprite*)
+							malloc(sizeof(t_sprite))))
+					exit_with_error("Malloc error", *parse);
+				parse->sprites[count]->x = (double)x + 0.5;
+				parse->sprites[count]->y = (double)y + 0.5;
+				count++;
+			}
+			x++;
+		}
+		y++;
+	}
+	parse->sprites[count] = NULL;
+}
+
 void	game_start(t_parse *parse)
 {
 	t_all		all;
@@ -478,7 +657,7 @@ void	game_start(t_parse *parse)
 	mlx_hook(all.mlx.win, 17, 0, game_end, &all);
 	mlx_hook(all.mlx.win, 2, 0, press_key, &all);
 	mlx_hook(all.mlx.win, 3, 0, release_key, &all);
-//	raycasting(&all);
+	//raycasting(&all);
 	mlx_loop_hook(all.mlx.mlx, raycasting, &all);
 /*t_texture *we;
 we = &all.textures.we;
