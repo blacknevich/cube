@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/30 16:49:28 by nscarab           #+#    #+#             */
-/*   Updated: 2020/11/07 20:34:42 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/12 19:49:35 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,5 @@ void				ft_lstclear(t_list **lst, void (*del)(void*));
 void				ft_lstiter(t_list *lst, void (*f)(void *));
 t_list				*ft_lstmap(t_list *lst,
 		void *(*f)(void *), void (*del)(void *));
+void				ft_skip_spaces(char **str);
 #endif

@@ -6,11 +6,12 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/30 18:21:01 by nscarab           #+#    #+#             */
-/*   Updated: 2020/12/31 19:41:54 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/13 21:02:06 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube.h"
+#include <stdlib.h>
 
 void	my_mlx_pixel_put(t_mlx *mlx, int x, int y, int color)
 {
@@ -48,7 +49,7 @@ void	draw_floor(t_all *all)
 {
 	size_t	x;
 	size_t	y;
-	int	color;
+	int		color;
 
 	y = all->parse.res_y / 2;
 	color = all->parse.floor_color;
