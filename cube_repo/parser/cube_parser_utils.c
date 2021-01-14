@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 10:50:57 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/13 20:41:59 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/14 13:53:31 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ int		ft_atoi_resolution(char **str, t_parse parse)
 		exit_with_error("Not valid resolution format", parse);
 	while (ft_isdigit(**str))
 	{
-		if (out < 16384)
+		if (out < 2560)
 			out = 10 * out + (**str - '0');
 		*str = *str + 1;
 	}
-	if (out > 16384)
-		out = 16384;
+	if (out > 2560)
+		out = 2560;
 	return (out);
 }
 

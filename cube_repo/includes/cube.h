@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/16 18:30:34 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/13 21:35:01 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/14 13:56:54 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # define LEFT_KEY 123
 # define RIGHT_KEY 124
 # define MOVESPEED 0.1
-# define ROTSPEED 0.03
+# define ROTSPEED 0.05
 # define ZOOM 0.6
 
 /*

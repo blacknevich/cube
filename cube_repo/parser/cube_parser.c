@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 10:51:18 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/13 20:54:27 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/14 13:53:22 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,12 @@ int			get_resolution(char **str, t_parse *parse)
 	if (parse->res_x != -1 || parse->res_y != -1)
 		exit_with_error("Double info inclusion", *parse);
 	*str = *str + 2;
-	if ((parse->res_x = ft_atoi_resolution(str, *parse)) < 0)
-		return (1);
-	if ((parse->res_y = ft_atoi_resolution(str, *parse)) < 0)
-		return (1);
+	if ((parse->res_x = ft_atoi_resolution(str, *parse)) <= 0)
+		exit_with_error("Invalid resolution", *parse);
+	if ((parse->res_y = ft_atoi_resolution(str, *parse)) <= 0)
+		exit_with_error("Invalid resolution", *parse);
+	if (parse->res_y > 1440)
+		parse->res_y = 1440;
 	return (0);
 }
 
@@ -94,6 +96,8 @@ void		ft_parse(t_parse *parse)
 	int	count;
 
 	count = 0;
+	if ((parse->file)[count][0] == '\0')
+		exit_with_error("First line is empty", *parse);
 	while (is_premap((parse->file)[count]))
 		check_premap_string((parse->file)[count], parse, &count);
 	if (!is_enough_info(*parse))

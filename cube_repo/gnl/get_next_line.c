@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/14 18:00:58 by nscarab           #+#    #+#             */
-/*   Updated: 2020/11/19 13:48:03 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/14 13:12:36 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,9 @@ int			get_next_line(int fd, char **line)
 	static char	*buf[1024];
 	long long	read_counter;
 
+	*line = NULL;
 	if (fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
-	*line = NULL;
 	read_counter = 1;
 	if (gnl_buf_create(&buf[fd], &read_counter))
 		return (gnl_buf_clear(&buf[fd]));

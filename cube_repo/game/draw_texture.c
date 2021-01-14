@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/13 17:28:27 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/13 21:19:08 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/01/14 14:42:44 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,11 @@ void				draw_texture(t_all *all, int x)
 	y = all->render.draw_start;
 	while (y < all->render.draw_end)
 	{
-		tex_y = (int)all->render.tex_pos & (drawn->height - 1);
+		tex_y = (int)all->render.tex_pos;
+		if (tex_y > all->parse.res_y)
+			tex_y = all->parse.res_y;
 		all->render.tex_pos += all->render.draw_step;
-		color = ((int*)drawn->addr)[drawn->height * tex_y + all->render.tex_x];
+		color = ((int*)drawn->addr)[drawn->width * tex_y + all->render.tex_x];
 		my_mlx_pixel_put(&all->mlx, x, y, color);
 		y++;
 	}
