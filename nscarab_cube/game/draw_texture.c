@@ -6,7 +6,7 @@
 /*   By: nscarab <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/13 17:28:27 by nscarab           #+#    #+#             */
-/*   Updated: 2021/01/19 12:14:57 by nscarab          ###   ########.fr       */
+/*   Updated: 2021/02/16 13:22:21 by nscarab          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ static t_texture	*choose_texture(t_all *all)
 	else
 	{
 		if (render->fan.x < 0)
-			return (&all->textures.ea);
-		else
 			return (&all->textures.we);
+		else
+			return (&all->textures.ea);
 	}
 }
 

@@ -2,8 +2,7 @@ NO ./pics/sample
 WE ./pics/knight
 EA ./pics/hitler
 F 255,0,0
-R 1920 1080
-
+R 12 12
 
 SO ./pics/verboten
 S ./pics/hitler

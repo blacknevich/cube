@@ -60,6 +60,7 @@ $(NAME): $(OBJ) $(HDR)
 	gcc $(CFLAGS) $(MLX_FLAGS) $(L_PATH)$(L_NAME) $(MLX_PATH)$(MLX_LIB) $(OBJ) -o $(NAME)
 
 all:  $(NAME)
+bonus: $(NAME)
 
 clean:
 	make clean -C $(L_PATH)
